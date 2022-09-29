@@ -2,7 +2,7 @@ import { useLoaderData } from "react-router-dom";
 import Cliente from "../components/Cliente";
 import { ObtenerClientes } from "../data/Clientes";
 
-
+// Correr servidor JSon:  json-server --watch db.json
 export  function loader() {
     const clientes = ObtenerClientes();   
     return clientes;
@@ -19,9 +19,11 @@ const Index = () => {
             {clientes.length ? (
                 <table className="w-full bg-white shadow mt-5 table-auto">
                     <thead className="bg-blue-800 text-white">
-                        <th className="p-2">Clientes</th>
-                        <th className="p-2">Contacto</th>
-                        <th className="p-2">Acciónes</th>
+                        <tr>
+                            <th className="p-2">Clientes</th>
+                            <th className="p-2">Contacto</th>
+                            <th className="p-2">Acciónes</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {clientes.map(cliente =>(

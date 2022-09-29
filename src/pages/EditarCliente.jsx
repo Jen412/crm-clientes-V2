@@ -1,9 +1,22 @@
-import { useNavigate, Form, useActionData, redirect} from "react-router-dom"
-import Formulario from "../components/Formulario"
+import { Form, redirect, useActionData, useLoaderData, useNavigate } from "react-router-dom";
 import Error from "../components/Error";
-import { agregarCliente } from "../data/Clientes";
+import Formulario from "../components/Formulario";
+import { ObtenerCliente, actualizarCliente} from "../data/Clientes";
 
-export async function action({request}) {
+export async function loader({params}) {
+    const {clienteId} = params;
+    const cliente = await ObtenerCliente(clienteId)
+    if (Object.values(cliente).length===0) {
+        throw new Response("", {
+            status: 404,
+            statusText: "No hay Resultados"
+        })
+    }
+
+    return cliente;
+}
+
+export async function action({request, params}) {
     const formData = await  request.formData();
 
     const datos = Object.fromEntries(formData);    
@@ -22,22 +35,19 @@ export async function action({request}) {
     if (Object.keys(errores).length) {
         return errores;
     }
-
-    await agregarCliente(datos);
-
+    //ActualizarCliente
+    await actualizarCliente(params.clienteId,datos);
     return redirect("/");
 }
 
-
-const NuevoCliente = () => {
-    const navigate = useNavigate()
-
+const EditarCliente = () => {
+    const navigate = useNavigate();
+    const cliente = useLoaderData();
     const errores = useActionData()
-
     return (
         <>
-            <h1 className="font-black text-4xl text-blue-900">Nuevo Cliente</h1>   
-            <p className="mt-3">LLena todos los campos para registrar un nuevo cliente</p>
+            <h1 className="font-black text-4xl text-blue-900">Editar Cliente</h1>   
+            <p className="mt-3">A continuación podras editar los datos de un cliente</p>
 
             <div className="justify-end flex">
                 <button 
@@ -58,11 +68,11 @@ const NuevoCliente = () => {
                     method="POST"
                     noValidate
                 >
-                    <Formulario/>
+                    <Formulario cliente={cliente}/>
 
                     <input 
                         type="submit" 
-                        value="Regristrar Cliente" 
+                        value="Guardar Cambios" 
                         className="mt-5 w-full bg-blue-800 p-3 uppercase font-bold text-white text-lg"
                     />
                 </Form>
@@ -71,4 +81,4 @@ const NuevoCliente = () => {
     )
 }
 
-export default NuevoCliente
+export default EditarCliente
