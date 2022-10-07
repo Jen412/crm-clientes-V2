@@ -5,6 +5,7 @@ import { ObtenerClientes } from "../data/Clientes";
 // Correr servidor JSon:  json-server --watch db.json
 export  function loader() {
     const clientes = ObtenerClientes();   
+    console.log("🚀 ~ file: Index.jsx ~ line 8 ~ loader ~ clientes", clientes)
     return clientes;
 }
 
